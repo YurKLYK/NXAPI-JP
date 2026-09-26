@@ -1,0 +1,63 @@
+name: Build app
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: linux
+            targets: --linux deb appimage
+          - os: windows-latest
+            name: windows
+            targets: --win nsis
+          - os: macos-latest
+            name: macos
+            targets: --macos zip:x64 zip:arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --force
+      - run: npx tsc
+      - run: npx rollup --config
+        env:
+          NODE_ENV: production
+      - run: node resources/build/ci-package-json.js
+      - run: npx electron-builder build ${{ matrix.targets }} --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ matrix.name }}
+          path: |
+            dist/app/package/*.AppImage
+            dist/app/package/*.deb
+            dist/app/package/*.exe
+            dist/app/package/*.zip
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release --repo "$GITHUB_REPOSITORY" view "$GITHUB_REF_NAME" ||
+            gh release --repo "$GITHUB_REPOSITORY" create "$GITHUB_REF_NAME" --verify-tag --generate-notes
+          gh release --repo "$GITHUB_REPOSITORY" upload "$GITHUB_REF_NAME" artifacts/* --clobber
