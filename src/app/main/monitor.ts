@@ -164,6 +164,9 @@ export class PresenceMonitorManager {
             this.monitors.splice(index, 1);
 
             i.disable();
+            await i.waitUntilStopped().catch(err => {
+                debug('Error while stopping presence monitor', err);
+            });
 
             if (i instanceof EmbeddedPresenceMonitor) this.notifications.removeAccount(id);
 
@@ -464,7 +467,7 @@ export class EmbeddedPresenceMonitor extends ZncDiscordPresence {
 
     enable() {
         if (this._running !== 0) return;
-        this._run();
+        this._run_promise = this._run();
     }
 
     disable() {
@@ -476,7 +479,12 @@ export class EmbeddedPresenceMonitor extends ZncDiscordPresence {
         return this._running !== 0;
     }
 
+    waitUntilStopped() {
+        return this._run_promise ?? Promise.resolve();
+    }
+
     private _running = 0;
+    private _run_promise: Promise<void> | null = null;
 
     private async _run() {
         this._running++;
@@ -523,7 +531,7 @@ export class EmbeddedProxyPresenceMonitor extends ZncProxyDiscordPresence {
 
     enable() {
         if (this._running !== 0) return;
-        this._run();
+        this._run_promise = this._run();
     }
 
     disable() {
@@ -535,7 +543,12 @@ export class EmbeddedProxyPresenceMonitor extends ZncProxyDiscordPresence {
         return this._running !== 0;
     }
 
+    waitUntilStopped() {
+        return this._run_promise ?? Promise.resolve();
+    }
+
     private _running = 0;
+    private _run_promise: Promise<void> | null = null;
 
     private async _run() {
         this._running++;

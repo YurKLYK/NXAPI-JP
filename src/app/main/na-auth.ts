@@ -363,6 +363,7 @@ async function authenticateCoralSessionToken(
     debug('session token', token);
 
     const {nso, data} = await getToken(app.store.storage, token.session_token, process.env.ZNC_PROXY_URL, false);
+    app.store.users.allow(token.session_token);
 
     const users = new Set(await app.store.storage.getItem('NintendoAccountIds') ?? []);
     users.add(data.user.id);

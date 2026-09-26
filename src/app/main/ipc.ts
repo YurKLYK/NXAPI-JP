@@ -1,4 +1,4 @@
-import { BrowserWindow, clipboard, IpcMain, IpcMainInvokeEvent, KeyboardEvent, Menu, MenuItem, ShareMenu, SharingItem, shell, systemPreferences } from 'electron';
+import { BrowserWindow, clipboard, dialog, IpcMain, IpcMainInvokeEvent, KeyboardEvent, Menu, MenuItem, ShareMenu, SharingItem, shell, systemPreferences } from 'electron';
 import { User } from 'discord-rpc';
 import createDebug from '../../util/debug.js';
 import { ErrorDescription, ErrorDescriptionSymbol, HasErrorDescription } from '../../util/errors.js';
@@ -20,6 +20,7 @@ import type { AddFriendProps } from '../browser/add-friend/index.js';
 import { CoralUser } from '../../common/users.js';
 import { MembershipRequiredError } from '../../common/auth/util.js';
 import { showErrorDialog } from './util.js';
+import { removeUserData } from '../../common/remove-user.js';
 
 const debug = createDebug('app:main:ipc');
 
@@ -303,8 +304,45 @@ function buildUserMenu(app: App, user: NintendoAccountUser, nso?: CurrentUser<tr
                 }, window)}),
         ] : []),
         new MenuItem({type: 'separator'}),
-        new MenuItem({label: t('remove_help')!, enabled: false}),
+        new MenuItem({label: t('remove')!, click: () => confirmRemoveUser(app, user, window)}),
     ]);
+}
+
+async function confirmRemoveUser(app: App, user: NintendoAccountUser, window?: BrowserWindow) {
+    try {
+        const t = app.i18n.getFixedT(null, 'menus', 'user');
+        const options = {
+            type: 'warning' as const,
+            title: t('remove_title')!,
+            message: t('remove_message', {name: user.nickname})!,
+            detail: t('remove_detail')!,
+            buttons: [t('cancel')!, t('remove_confirm')!],
+            defaultId: 0,
+            cancelId: 0,
+            noLink: true,
+        };
+        const {response} = window ? await dialog.showMessageBox(window, options) : await dialog.showMessageBox(options);
+        if (response !== 1) return;
+
+        const coral_session_token: string | undefined =
+            await app.store.storage.getItem('NintendoAccountToken.' + user.id);
+        await app.monitors.stop(user.id);
+        if (coral_session_token) await app.store.users.remove(coral_session_token).catch(error => {
+            debug('Error clearing in-memory data for removed account', error);
+        });
+        await removeUserData(app.store.storage, user.id);
+        cached_errors.delete(user.id);
+
+        app.store.emit('update-nintendo-accounts');
+        app.store.emit('update-discord-presence-source');
+    } catch (error) {
+        showErrorDialog({
+            message: app.i18n.t('menus:user.remove_error')!,
+            error,
+            app,
+            window,
+        });
+    }
 }
 
 function buildFriendMenu(app: App, user: NintendoAccountUser, nso: CurrentUser<true> | CurrentUser<false>, friend: Friend) {

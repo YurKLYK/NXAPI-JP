@@ -13,11 +13,13 @@ const debug = createDebug('nxapi:users');
 export interface UserData {
     created_at: number;
     expires_at: number;
+    onRemove?: () => Promise<void>;
 }
 
 export default class Users<T extends UserData> {
     private users = new Map<string, T>();
     private promise = new Map<string, Promise<T>>();
+    private blocked = new Set<string>();
     private _get: (token: string) => Promise<T>;
 
     constructor(get: (token: string) => Promise<T>) {
@@ -25,6 +27,8 @@ export default class Users<T extends UserData> {
     }
 
     async get(token: string): Promise<T> {
+        if (this.blocked.has(token)) throw new Error('User has been removed');
+
         const existing = this.users.get(token);
 
         if (existing && existing.expires_at >= Date.now()) {
@@ -44,11 +48,21 @@ export default class Users<T extends UserData> {
     }
 
     async remove(token: string) {
+        this.blocked.add(token);
         const promise = this.promise.get(token);
-        this.promise.delete(token);
 
-        await promise;
-        this.users.delete(token);
+        try {
+            await promise;
+            const user = this.users.get(token);
+            await user?.onRemove?.call(user);
+        } finally {
+            this.promise.delete(token);
+            this.users.delete(token);
+        }
+    }
+
+    allow(token: string) {
+        this.blocked.delete(token);
     }
 
     static coral(store: Store | persist.LocalStorage, znc_proxy_url: string, ratelimit?: boolean): Users<CoralUser<ZncProxyApi>>
@@ -151,6 +165,13 @@ export class CoralUser<T extends CoralApiInterface = CoralApi> implements CoralU
         public active_event: CoralSuccessResponse<GetActiveEventResult>,
         public user: CoralSuccessResponse<CurrentUser<true> | CurrentUser<false>>,
     ) {}
+
+    async onRemove() {
+        if (!(this.nso instanceof CoralApi)) return;
+
+        this.nso.onTokenExpired = null;
+        await this.nso._renewToken;
+    }
 
     private async update(key: keyof CoralUser['updated'], callback: () => Promise<void>, ttl: number) {
         if (!this.updated[key] || (this.updated[key] + ttl) < Date.now()) {

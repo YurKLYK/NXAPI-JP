@@ -84,7 +84,13 @@ export const menus = {
         friend_notifications_enable: 'フレンド通知を有効化',
         refresh: '今すぐアップデート',
         add_friend: 'フレンドを追加',
-        remove_help: 'このユーザーを削除するには、nxapiコマンドを使用してください。',
+        remove: 'アカウントを削除...',
+        remove_title: 'アカウントを削除',
+        remove_message: '{{name}} をnxapiから削除しますか？',
+        remove_detail: 'この端末に保存されたログイントークン、キャッシュ、通知、Discord Rich Presenceの設定が削除されます。',
+        remove_confirm: '削除',
+        remove_error: 'アカウントを削除できませんでした',
+        cancel: 'キャンセル',
     },
 
     friend: {
@@ -203,6 +209,7 @@ export const main_window = {
         discord_not_connected: 'Discordに接続していません',
 
         add_user: 'ユーザーを追加',
+        account_actions: 'アカウントの操作',
         discord_setup: 'Discord Rich Presenceを設定',
     },
 

@@ -63,10 +63,11 @@ function User(props: {
     onPress?: () => void;
 }) {
     const theme = useColourScheme() === 'light' ? light : dark;
+    const {t} = useTranslation('main_window', {keyPrefix: 'sidebar'});
 
     const onContextMenu = useCallback(() => {
-        ipc.showUserMenu(props.user.user, props.user.nso?.nsoAccount.user);
-    }, [ipc, props.user.user, props.user.nso?.nsoAccount.user]);
+        ipc.showUserMenu(props.user.user, props.user.nso?.nsoAccount.user, !!props.user.moon);
+    }, [ipc, props.user.user, props.user.nso?.nsoAccount.user, props.user.moon]);
 
     const mii_url = new URL(props.user.user.iconUri ?? (props.user.user.mii ?
         'https://' + props.user.user.mii.imageOrigin + '/2.0.0/mii_images/' +
@@ -90,8 +91,8 @@ function User(props: {
         height: 32,
     };
 
-    const touchable = <TouchableOpacity onPress={props.onPress}>
-        <View style={[styles.user, props.selected ? theme.userSelected : null]}>
+    const touchable = <View style={[styles.user, props.selected ? theme.userSelected : null]}>
+        <TouchableOpacity onPress={props.onPress} style={styles.userSelect}>
             <View style={styles.userMii}>
                 <Image source={miiImageSource} style={styles.userMiiImage} />
             </View>
@@ -108,8 +109,13 @@ function User(props: {
                     <Text style={[styles.userNsoName, theme.text]}>{props.user.nso.nsoAccount.user.name}</Text>
                 </View> : null}
             </View>
-        </View>
-    </TouchableOpacity>;
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={onContextMenu} style={styles.userMenu}
+            accessibilityRole="button" accessibilityLabel={t('account_actions') ?? undefined}>
+            <Text style={[styles.userMenuText, theme.text]}>•••</Text>
+        </TouchableOpacity>
+    </View>;
 
     return Platform.OS === 'web' ? <View
         // @ts-expect-error react-native-web
@@ -166,9 +172,24 @@ const styles = StyleSheet.create({
 
     user: {
         flexDirection: 'row',
-        paddingVertical: 8,
-        paddingHorizontal: 20,
         alignItems: 'center',
+    },
+    userSelect: {
+        flex: 1,
+        flexDirection: 'row',
+        paddingVertical: 8,
+        paddingLeft: 20,
+        alignItems: 'center',
+    },
+    userMenu: {
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+        paddingHorizontal: 16,
+    },
+    userMenuText: {
+        fontSize: 14,
+        letterSpacing: 1,
+        opacity: 0.7,
     },
     userMii: {
         marginRight: 14,

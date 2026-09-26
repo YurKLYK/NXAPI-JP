@@ -63,7 +63,13 @@ export const menus = {
         friend_notifications_enable: 'Activar notificaciones para amigos',
         refresh: 'Actualizar ahora',
         add_friend: 'Añadir amigo',
-        remove_help: 'Utiliza el comando nxapi para eliminar a este usuario',
+        remove: 'Eliminar cuenta...',
+        remove_title: 'Eliminar cuenta',
+        remove_message: '¿Eliminar {{name}} de nxapi?',
+        remove_detail: 'Se eliminarán de este dispositivo los tokens de inicio de sesión, los datos en caché, las notificaciones y la configuración de Discord Rich Presence de esta cuenta.',
+        remove_confirm: 'Eliminar',
+        remove_error: 'Error al eliminar la cuenta',
+        cancel: 'Cancelar',
     },
 
     friend: {
@@ -168,6 +174,7 @@ export const main_window = {
         discord_not_connected: 'No conectado a Discord',
 
         add_user: 'Añadir usuario',
+        account_actions: 'Acciones de la cuenta',
         discord_setup: 'Configurar Discord Rich Presence',
     },
 
