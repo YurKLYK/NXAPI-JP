@@ -3,7 +3,7 @@ import { BackendModule, CallbackError, createInstance, ReadCallback } from 'i18n
 
 const debug = createDebug('app:i18n');
 
-import './locale/en-gb.js';
+import './locale/ja-jp.js';
 
 export const languages = {
     'en-GB': {
@@ -28,7 +28,7 @@ export const languages = {
         ],
     },
     'ja-JP': {
-        name: 'Japanese',
+        name: '日本語',
         app: () => import('./locale/ja-jp.js'),
         authors: [
             ['hilot06', 'https://github.com/hilot06'],
@@ -56,7 +56,7 @@ type Namespace = keyof typeof namespaces;
 
 export default function createI18n() {
     const i18n = createInstance({
-        fallbackLng: 'en-GB',
+        fallbackLng: ['ja-JP', 'en-GB'],
         debug: true,
         supportedLngs: Object.keys(languages),
         load: 'currentOnly',
