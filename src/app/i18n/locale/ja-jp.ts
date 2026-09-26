@@ -5,7 +5,22 @@ export const app = {
 
     licence: LICENCE_NOTICE,
     credits: CREDITS_NOTICE,
-    translation_credits: 'Japanese translation by hilot06.',
+    translation_credits: '{{language}}翻訳: {{authors, list}}',
+
+    error_loading_data: 'データの読み込み中にエラーが発生しました',
+
+    error_dialog: {
+        ok: 'OK',
+        retry: '再試行',
+        stop: '停止',
+        monitor_external: '外部モニター {{name}} でエラーが発生しました ({{error}})',
+        monitor_presence: 'プレイ情報の更新中にエラーが発生しました ({{error}})',
+    },
+
+    image_saved: {
+        title: '{{name}}から画像を保存しました',
+        body: '{{path}} に保存しました',
+    },
 };
 
 export const app_menu = {
@@ -14,8 +29,13 @@ export const app_menu = {
     learn_more: 'もっと知る',
     learn_more_github: 'GitHubでもっと知る',
     search_issues: 'Issuesの検索',
+    export_logs: 'ログを書き出す',
 
     refresh: '更新',
+
+    log_archive_creating: 'ログアーカイブを作成しています',
+    log_archive_created: 'ログアーカイブを作成しました',
+    log_archive_error: 'ログアーカイブの作成に失敗しました',
 };
 
 export const menu_app = {
@@ -36,6 +56,7 @@ export const menu_app = {
 
     show_main_window: 'メイン画面を表示',
     preferences: '設定',
+    language: '言語',
     quit: '終了',
 };
 
@@ -101,6 +122,52 @@ export const handle_uri = {
     cancel: 'キャンセル',
 };
 
+export const na_auth = {
+    window: {
+        title: 'ニンテンドーアカウント',
+    },
+
+    znca_api_use: {
+        title: 'サードパーティAPIの利用について',
+
+        text: `
+Nintendo Switch AppのAPIを利用するために、nxapiは一部のデータをサードパーティのAPIへ送信する必要があります。これは、NintendoのAPIに対して実際のNintendo Switch Appを使っていると認識させるために必要な処理です。
+
+既定では nxapi-znca-api.fancy.org.uk を利用しますが、環境変数を設定することで別のサービスを指定できます。特定のサービスの使用を強制しない場合、既定のAPIは予告なく変更されることがあります。
+
+送信されるデータは次のとおりです:
+
+- ニンテンドーアカウントのID
+- Nintendo Switch AppのAPIへの認証時: ニンテンドーアカウントの国情報を含むニンテンドーアカウントのIDトークン
+- ゲーム固有サービスへの認証時: Coral (Nintendo Switch Onlineアプリ) のユーザーIDと、Nintendo Switch Onlineの加入状況およびニンテンドーアカウントのこども制限の状態を含むCoralトークン
+
+2025年6月 (v3.0.1) 以降は、Nintendo Switch AppのAPIとの間で送受信するすべてのデータも暗号化のために送信されます。
+`.trim(),
+
+        ok: 'OK',
+        cancel: 'キャンセル',
+        more_information: '詳しく見る',
+    },
+
+    notification_coral: {
+        title: 'Nintendo Switch Online',
+        body_existing: 'すでに{{name}}としてサインインしています (ニンテンドーアカウント {{na_name}} / {{na_username}})',
+        body_authenticated: '{{name}}として認証しました (ニンテンドーアカウント {{na_name}} / {{na_username}})',
+        body_reauthenticated: '{{name}}として再認証しました (ニンテンドーアカウント {{na_name}} / {{na_username}})',
+    },
+
+    notification_moon: {
+        title: 'NintendoみまもりSwitch',
+        body_existing: 'すでに{{na_name}} ({{na_username}})としてサインインしています',
+        body_authenticated: '{{na_name}} ({{na_username}})として認証しました',
+        body_reauthenticated: '{{na_name}} ({{na_username}})として再認証しました',
+    },
+
+    error: {
+        title: 'アカウントの追加に失敗しました',
+    },
+};
+
 export const time_since = {
     default: {
         now: 'たった今',
@@ -133,6 +200,7 @@ export const main_window = {
         discord_active_friend: 'Discord Rich Presenceが動作中: <0></0>',
         discord_not_active: 'Discord Rich Presenceは動作していません',
         discord_playing: 'プレイ中',
+        discord_not_connected: 'Discordに接続していません',
 
         add_user: 'ユーザーを追加',
         discord_setup: 'Discord Rich Presenceを設定',
@@ -148,7 +216,7 @@ export const main_window = {
     main_section: {
         error: {
             title: 'データ読み込みエラー',
-            message: '{{errors, list}} データの読み込み中にエラーが発生しました。.',
+            message: '{{errors, list}}データの読み込み中にエラーが発生しました。',
             message_friends: 'フレンド',
             message_webservices: 'ゲーム固有サービス',
             message_event: 'ボイスチャット',
@@ -213,7 +281,7 @@ export const preferences_window = {
 
     startup: {
         heading: 'スタートアップ',
-        login: 'Windowsにログインした時に開く',
+        login: 'ログイン時に開く',
         background: 'バックグラウンドで開く',
     },
 
@@ -254,6 +322,12 @@ export const preferences_window = {
         discord: 'スプラトゥーン3向けのDiscord Rich Presenceを有効にする',
         discord_help_1: 'スプラトゥーン3をプレイ中に、イカリング3を使って追加の情報を取得・表示します。メインアカウントとフレンドであるサブアカウントを用意し、サブアカウントがイカリング3にアクセスできる必要があります。',
         discord_help_2: 'Discord Presenceに設定したURLからイカリング3のデータが返ってくる場合は、この設定に関係なく追加の情報が取得・表示されます。',
+    },
+
+    miscellaneous: {
+        heading: 'その他',
+        show_error_alerts: 'エラーを通知する',
+        show_error_alerts_help: 'プレイ情報の更新中にエラーが発生したときに通知を表示します。無効にすると、nxapiはエラー発生後の更新間隔を延ばします。',
     },
 };
 

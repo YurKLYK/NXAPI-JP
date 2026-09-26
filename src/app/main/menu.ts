@@ -124,7 +124,7 @@ export default class MenuApp {
         menu.append(new MenuItem({type: 'separator'}));
         menu.append(new MenuItem({label: t('show_main_window')!, click: () => this.app.showMainWindow()}));
         menu.append(new MenuItem({label: t('preferences')!, click: () => this.app.showPreferencesWindow()}));
-        if (show_force_language_menu) menu.append(new MenuItem({label: 'Language', submenu: Menu.buildFromTemplate([
+        if (show_force_language_menu) menu.append(new MenuItem({label: t('language')!, submenu: Menu.buildFromTemplate([
             ...this.app.i18n.options.supportedLngs || ['cimode'],
         ].map(l => new MenuItem({
             label: languages[l as keyof typeof languages]?.name ?? l,

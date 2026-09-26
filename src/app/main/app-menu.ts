@@ -63,7 +63,7 @@ function createAppMenuItems(i18n?: i18n) {
             {
                 label: i18n?.t('app_menu:export_logs') ?? 'Export Logs',
                 click: () => {
-                    createLogArchive();
+                    createLogArchive(i18n);
                 },
             },
         ],

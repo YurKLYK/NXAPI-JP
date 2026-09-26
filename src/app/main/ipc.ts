@@ -148,7 +148,7 @@ export function setupIpc(appinstance: App, ipcMain: IpcMain) {
 
         for (const error of show) {
             showErrorDialog({
-                message: 'Error loading data',
+                message: appinstance.i18n.t('app:error_loading_data') ?? 'Error loading data',
                 error,
                 app: appinstance,
                 window: BrowserWindow.fromWebContents(e.sender) ?? undefined,
@@ -227,7 +227,7 @@ export function setupIpc(appinstance: App, ipcMain: IpcMain) {
         (buildFriendMenu(appinstance, user, nso, friend)
             .popup({window: BrowserWindow.fromWebContents(e.sender)!}), undefined));
 
-    const webserviceipc = new WebServiceIpc(store);
+    const webserviceipc = new WebServiceIpc(store, appinstance.i18n);
     ipcMain.on('nxapi:webserviceapi:getWebServiceSync', e => e.returnValue = webserviceipc.getWebService(e));
     ipcMain.handle('nxapi:webserviceapi:invokeNativeShare', (e, data: string) => webserviceipc.invokeNativeShare(e, data));
     ipcMain.handle('nxapi:webserviceapi:invokeNativeShareUrl', (e, data: string) => webserviceipc.invokeNativeShareUrl(e, data));
@@ -358,7 +358,7 @@ function buildFriendMenu(app: App, user: NintendoAccountUser, nso: CurrentUser<t
             })!, enabled: false}),
             new MenuItem({type: 'separator'}),
         ] : [
-            new MenuItem({label: 'Offline', enabled: false}),
+            new MenuItem({label: t('presence_offline')!, enabled: false}),
             ...(friend.presence.logoutAt ? [
                 new MenuItem({label: t('presence_logout_time', {
                     date: new Date(friend.presence.logoutAt * 1000),

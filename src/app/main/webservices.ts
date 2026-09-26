@@ -6,6 +6,7 @@ import { Buffer } from 'node:buffer';
 import * as util from 'node:util';
 import { fetch } from 'undici';
 import mimetypes from 'mime-types';
+import { i18n } from 'i18next';
 import { App, Store } from './index.js';
 import { createWebServiceWindow } from './windows.js';
 import { askUserForUri, showErrorDialog } from './util.js';
@@ -228,7 +229,8 @@ export interface QrCodeReaderOptions {
 
 export class WebServiceIpc {
     constructor(
-        store: Store
+        store: Store,
+        readonly i18n?: i18n,
     ) {}
 
     private getWindowData(window: WebContents) {
@@ -447,8 +449,10 @@ export class WebServiceIpc {
             const imagepath = await this.downloadShareImage(url);
 
             new Notification({
-                title: 'Image saved from ' + webservice.name,
-                body: 'Image downloaded to ' + imagepath,
+                title: this.i18n?.t('app:image_saved.title', {name: webservice.name}) ??
+                    'Image saved from ' + webservice.name,
+                body: this.i18n?.t('app:image_saved.body', {path: imagepath}) ??
+                    'Image downloaded to ' + imagepath,
                 icon: nativeImage.createFromPath(imagepath),
             }).show();
         }
