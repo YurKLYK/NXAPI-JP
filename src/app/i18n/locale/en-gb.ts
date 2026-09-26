@@ -6,6 +6,21 @@ export const app = {
     licence: LICENCE_NOTICE,
     credits: CREDITS_NOTICE,
     translation_credits: '{{language}} translation by {{authors, list}}.',
+
+    error_loading_data: 'Error loading data',
+
+    error_dialog: {
+        ok: 'OK',
+        retry: 'Retry',
+        stop: 'Stop',
+        monitor_external: '{{error}} in external monitor {{name}}',
+        monitor_presence: '{{error}} updating presence monitor',
+    },
+
+    image_saved: {
+        title: 'Image saved from {{name}}',
+        body: 'Image downloaded to {{path}}',
+    },
 };
 
 export const app_menu = {
@@ -17,6 +32,10 @@ export const app_menu = {
     export_logs: 'Export Logs',
 
     refresh: 'Refresh',
+
+    log_archive_creating: 'Creating log archive',
+    log_archive_created: 'Created log archive',
+    log_archive_error: 'Error creating log archive',
 };
 
 export const menu_app = {
@@ -37,6 +56,7 @@ export const menu_app = {
 
     show_main_window: 'Show main window',
     preferences: 'Preferences',
+    language: 'Language',
     quit: 'Quit',
 };
 

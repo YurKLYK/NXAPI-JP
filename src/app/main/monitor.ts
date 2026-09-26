@@ -63,9 +63,15 @@ export class PresenceMonitorManager {
         };
         i.discord.onMonitorError = async (monitor, instance, err) => {
             const {response} = await showErrorDialog({
-                message: err.name + ' in external monitor ' + monitor.name,
+                message: this.app.i18n.t('app:error_dialog.monitor_external', {
+                    error: err.name, name: monitor.name,
+                }) ?? err.name + ' in external monitor ' + monitor.name,
                 error: err,
-                buttons: ['OK', 'Retry', 'Stop'],
+                buttons: [
+                    this.app.i18n.t('app:error_dialog.ok') ?? 'OK',
+                    this.app.i18n.t('app:error_dialog.retry') ?? 'Retry',
+                    this.app.i18n.t('app:error_dialog.stop') ?? 'Stop',
+                ],
                 defaultId: 0,
             });
 
@@ -403,9 +409,13 @@ export class PresenceMonitorManager {
         if (!show_error_alerts) return LoopResult.DEFER_NEXT_UPDATE;
 
         const {response} = await showErrorDialog({
-            message: err.name + ' updating presence monitor',
+            message: this.app.i18n.t('app:error_dialog.monitor_presence', {error: err.name}) ??
+                err.name + ' updating presence monitor',
             error: err,
-            buttons: ['OK', 'Retry'],
+            buttons: [
+                this.app.i18n.t('app:error_dialog.ok') ?? 'OK',
+                this.app.i18n.t('app:error_dialog.retry') ?? 'Retry',
+            ],
             defaultId: 0,
         });
 

@@ -6,6 +6,21 @@ export const app = {
     licence: LICENCE_NOTICE,
     credits: CREDITS_NOTICE,
     translation_credits: '{{language}}翻訳: {{authors, list}}',
+
+    error_loading_data: 'データの読み込み中にエラーが発生しました',
+
+    error_dialog: {
+        ok: 'OK',
+        retry: '再試行',
+        stop: '停止',
+        monitor_external: '外部モニター {{name}} でエラーが発生しました ({{error}})',
+        monitor_presence: 'プレイ情報の更新中にエラーが発生しました ({{error}})',
+    },
+
+    image_saved: {
+        title: '{{name}}から画像を保存しました',
+        body: '{{path}} に保存しました',
+    },
 };
 
 export const app_menu = {
@@ -17,6 +32,10 @@ export const app_menu = {
     export_logs: 'ログを書き出す',
 
     refresh: '更新',
+
+    log_archive_creating: 'ログアーカイブを作成しています',
+    log_archive_created: 'ログアーカイブを作成しました',
+    log_archive_error: 'ログアーカイブの作成に失敗しました',
 };
 
 export const menu_app = {
@@ -37,6 +56,7 @@ export const menu_app = {
 
     show_main_window: 'メイン画面を表示',
     preferences: '設定',
+    language: '言語',
     quit: '終了',
 };
 

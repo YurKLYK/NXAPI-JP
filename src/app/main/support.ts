@@ -1,6 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { createWriteStream, WriteStream } from 'node:fs';
 import { app, dialog, Notification, shell } from 'electron';
+import { i18n } from 'i18next';
 import createDebug from '../../util/debug.js';
 import { generateEncryptedLogArchive } from '../../util/support.js';
 import { join } from 'node:path';
@@ -8,7 +9,7 @@ import { showErrorDialog } from './util.js';
 
 const debug = createDebug('app:main:support');
 
-export async function createLogArchive() {
+export async function createLogArchive(i18n?: i18n) {
     let start_notification: Notification | null = null;
 
     try {
@@ -34,7 +35,7 @@ export async function createLogArchive() {
         debug('creating log archive');
 
         start_notification = new Notification({
-            title: 'Creating log archive',
+            title: i18n?.t('app_menu:log_archive_creating') ?? 'Creating log archive',
         });
         start_notification.show();
 
@@ -53,7 +54,7 @@ export async function createLogArchive() {
         start_notification.close();
 
         new Notification({
-            title: 'Created log archive',
+            title: i18n?.t('app_menu:log_archive_created') ?? 'Created log archive',
         }).show();
 
         shell.showItemInFolder(result.filePath);
@@ -61,7 +62,7 @@ export async function createLogArchive() {
         start_notification?.close();
 
         showErrorDialog({
-            message: 'Error creating log archive',
+            message: i18n?.t('app_menu:log_archive_error') ?? 'Error creating log archive',
             error: err,
         });
     }
