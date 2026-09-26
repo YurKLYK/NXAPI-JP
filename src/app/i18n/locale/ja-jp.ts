@@ -84,6 +84,7 @@ export const menus = {
         friend_notifications_enable: 'フレンド通知を有効化',
         refresh: '今すぐアップデート',
         add_friend: 'フレンドを追加',
+        reauthenticate: '再ログイン...',
         remove: 'アカウントを削除...',
         remove_title: 'アカウントを削除',
         remove_message: '{{name}} をnxapiから削除しますか？',
@@ -171,6 +172,8 @@ Nintendo Switch AppのAPIを利用するために、nxapiは一部のデータ�
 
     error: {
         title: 'アカウントの追加に失敗しました',
+        reauthenticate_title: '再ログインに失敗しました',
+        account_mismatch: '選択したニンテンドーアカウントがこのユーザーと一致しません。同じアカウントを選択してください。',
     },
 };
 
@@ -228,6 +231,7 @@ export const main_window = {
             message_webservices: 'ゲーム固有サービス',
             message_event: 'ボイスチャット',
             retry: 'やり直す',
+            reauthenticate: '再ログイン',
             view_details: '詳細を表示',
         },
 

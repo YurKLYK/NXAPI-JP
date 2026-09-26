@@ -8,6 +8,8 @@ on:
 
 jobs:
   build:
+    env:
+      NXAPI_AUTH_APP_CLIENT_ID: W7bZ6IqKORfU0w9fe_M2mQ
     strategy:
       fail-fast: false
       matrix:

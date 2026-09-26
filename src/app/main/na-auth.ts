@@ -13,6 +13,7 @@ import createDebug from '../../util/debug.js';
 import { Jwt } from '../../util/jwt.js';
 import { ZNCA_API_USE_TEXT, ZNCA_API_USE_URL, ZNCA_API_USE_VERSION } from '../../common/constants.js';
 import { InvalidNintendoAccountTokenError } from '../../common/auth/na.js';
+import { removeSavedCoralTokenData } from '../../common/remove-user.js';
 
 const debug = createDebug('app:main:na-auth');
 
@@ -393,6 +394,51 @@ export async function askAddNsoAccount(app: App, iab = true) {
         if (err instanceof NintendoAccountSessionAuthorisationError && err.code === 'access_denied') return;
 
         dialog.showErrorBox(app.i18n.t('na_auth:error.title') ?? 'Error adding account',
+            err.stack || err.message);
+    }
+}
+
+export async function askReauthenticateNsoAccount(app: App, na_id: string, iab = true) {
+    try {
+        const authenticator = NintendoAccountSessionAuthorisationCoral.create();
+        const {code, window} = iab ?
+            await getSessionTokenCodeByInAppBrowser(app, authenticator, false) :
+            await getSessionTokenCodeByDefaultBrowser(authenticator, false);
+
+        window?.setFocusable(false);
+        window?.blurWebView();
+
+        try {
+            const [jwt] = Jwt.decode(code);
+            if (jwt.payload.sub !== na_id) {
+                throw new Error(app.i18n.t('na_auth:error.account_mismatch') ??
+                    'The selected Nintendo Account does not match this user.');
+            }
+
+            await checkZncaApiUseAllowed(app, window);
+
+            const previous_token: string | undefined =
+                await app.store.storage.getItem('NintendoAccountToken.' + na_id);
+            const result = await authenticateCoralSessionToken(app, authenticator, code, true);
+            const current_token: string | undefined =
+                await app.store.storage.getItem('NintendoAccountToken.' + na_id);
+
+            if (previous_token && previous_token !== current_token) {
+                await app.monitors.stop(na_id);
+                await app.store.users.remove(previous_token);
+                await removeSavedCoralTokenData(app.store.storage, previous_token);
+                await app.store.restoreMonitorState(app.monitors);
+            }
+
+            app.store.emit('update-nintendo-accounts');
+            return result;
+        } finally {
+            window?.close();
+        }
+    } catch (err: any) {
+        if (err instanceof NintendoAccountSessionAuthorisationError && err.code === 'access_denied') return;
+
+        dialog.showErrorBox(app.i18n.t('na_auth:error.reauthenticate_title') ?? 'Error signing in again',
             err.stack || err.message);
     }
 }

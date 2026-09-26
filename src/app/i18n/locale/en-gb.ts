@@ -84,6 +84,7 @@ export const menus = {
         friend_notifications_enable: 'Enable friend notifications',
         refresh: 'Update now',
         add_friend: 'Add friend',
+        reauthenticate: 'Sign in again...',
         remove: 'Remove account...',
         remove_title: 'Remove account',
         remove_message: 'Remove {{name}} from nxapi?',
@@ -160,6 +161,8 @@ export const na_auth = {
 
     error: {
         title: 'Error adding account',
+        reauthenticate_title: 'Error signing in again',
+        account_mismatch: 'The selected Nintendo Account does not match this user. Please choose the same account.',
     },
 };
 
@@ -217,6 +220,7 @@ export const main_window = {
             message_webservices: 'game-specific services',
             message_event: 'voice chat',
             retry: 'Retry',
+            reauthenticate: 'Sign in again',
             view_details: 'View details',
         },
 

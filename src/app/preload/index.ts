@@ -60,6 +60,7 @@ const ipc = {
 
     listNintendoAccounts: () => inv<string[] | undefined>('accounts:list'),
     addCoralAccount: () => inv<string>('accounts:add-coral'),
+    reauthenticateCoralAccount: (id: string) => inv<string | undefined>('accounts:reauthenticate-coral', id),
     addMoonAccount: () => inv<string>('accounts:add-moon'),
 
     getNintendoAccountCoralToken: (id: string) => inv<string | undefined>('coral:gettoken', id),

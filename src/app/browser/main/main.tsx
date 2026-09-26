@@ -77,6 +77,11 @@ export default function Main(props: {
                 <Text style={[styles.errorMessage, theme.text]}>{t('error.message', {errors})}</Text>
                 <View style={styles.errorActions}>
                     <Button title={t('error.retry')} onPress={refresh} color={'#' + accent_colour} primary />
+                    {props.user.nso ? <TouchableOpacity
+                        onPress={() => ipc.reauthenticateCoralAccount(props.user.user.id)}
+                        style={styles.errorViewDetailsTouchable}>
+                        <Text style={theme.text}>{t('error.reauthenticate')}</Text>
+                    </TouchableOpacity> : null}
                     <TouchableOpacity onPress={showErrorDetails} style={styles.errorViewDetailsTouchable}>
                         <Text style={theme.text}>{t('error.view_details')}</Text>
                     </TouchableOpacity>

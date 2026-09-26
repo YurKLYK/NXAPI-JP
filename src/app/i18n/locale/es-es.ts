@@ -63,6 +63,7 @@ export const menus = {
         friend_notifications_enable: 'Activar notificaciones para amigos',
         refresh: 'Actualizar ahora',
         add_friend: 'Añadir amigo',
+        reauthenticate: 'Iniciar sesión de nuevo...',
         remove: 'Eliminar cuenta...',
         remove_title: 'Eliminar cuenta',
         remove_message: '¿Eliminar {{name}} de nxapi?',
@@ -136,6 +137,8 @@ export const na_auth = {
 
     error: {
         title: 'Error añadiendo cuenta',
+        reauthenticate_title: 'Error al iniciar sesión de nuevo',
+        account_mismatch: 'La cuenta Nintendo seleccionada no coincide con este usuario. Selecciona la misma cuenta.',
     },
 };
 
@@ -193,6 +196,7 @@ export const main_window = {
             message_webservices: 'servicios específicos de juegos',
             message_event: 'chat de voz',
             retry: 'Reintentar',
+            reauthenticate: 'Iniciar sesión de nuevo',
             view_details: 'Ver detalles',
         },
 

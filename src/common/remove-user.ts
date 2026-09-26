@@ -85,7 +85,7 @@ function isTokenForUser(session_token: string, na_id: string) {
     }
 }
 
-async function removeSavedCoralTokenData(storage: persist.LocalStorage, session_token: string) {
+export async function removeSavedCoralTokenData(storage: persist.LocalStorage, session_token: string) {
     await storage.removeItem('NsoToken.' + session_token);
     await storage.removeItem('IksmToken.' + session_token);
     await storage.removeItem('NookToken.' + session_token);

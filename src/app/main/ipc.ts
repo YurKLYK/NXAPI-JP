@@ -5,7 +5,7 @@ import { ErrorDescription, ErrorDescriptionSymbol, HasErrorDescription } from '.
 import { Jwt } from '../../util/jwt.js';
 import openWebService, { handleOpenWebServiceError, QrCodeReaderOptions, WebServiceIpc, WebServiceValidationError } from './webservices.js';
 import { createModalWindow, getWindowConfiguration, setWindowHeight } from './windows.js';
-import { askAddNsoAccount, askAddPctlAccount } from './na-auth.js';
+import { askAddNsoAccount, askAddPctlAccount, askReauthenticateNsoAccount } from './na-auth.js';
 import { App } from './index.js';
 import { EmbeddedPresenceMonitor } from './monitor.js';
 import { DiscordPresenceConfiguration, DiscordPresenceSource, DiscordStatus, LoginItemOptions, WindowType } from '../common/types.js';
@@ -106,6 +106,8 @@ export function setupIpc(appinstance: App, ipcMain: IpcMain) {
 
     handle('accounts:list', () => storage.getItem('NintendoAccountIds'));
     handle('accounts:add-coral', () => askAddNsoAccount(appinstance).then(u => u?.data.user.id));
+    handle('accounts:reauthenticate-coral', (e, id: string) =>
+        askReauthenticateNsoAccount(appinstance, id).then(u => u?.data.user.id));
     handle('accounts:add-moon', () => askAddPctlAccount(appinstance).then(u => u?.data.user.id));
 
     handle('coral:gettoken', (e, id: string) => storage.getItem('NintendoAccountToken.' + id));
@@ -304,6 +306,8 @@ function buildUserMenu(app: App, user: NintendoAccountUser, nso?: CurrentUser<tr
                 }, window)}),
         ] : []),
         new MenuItem({type: 'separator'}),
+        ...(nso ? [new MenuItem({label: t('reauthenticate')!,
+            click: () => askReauthenticateNsoAccount(app, user.id)})] : []),
         new MenuItem({label: t('remove')!, click: () => confirmRemoveUser(app, user, window)}),
     ]);
 }
